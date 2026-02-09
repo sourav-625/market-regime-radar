@@ -78,6 +78,46 @@ def regime_transition_info(model):
         "most_likely_transitions": transitions
     }
 
+def summarize_regimes(model):
+    summaries = []
+
+    for i in range(model.n_components):
+        mu = model.means_[i][0]
+        sigma = float(np.sqrt(model.covars_[i][0, 0]))
+
+        summaries.append({
+            "regime": i,
+            "mean_return": mu,
+            "volatility": sigma
+        })
+
+    return summaries
+
+def label_regimes(regime_stats):
+    means = np.array([r["mean_return"] for r in regime_stats])
+    vols = np.array([r["volatility"] for r in regime_stats])
+
+    mean_rank = means.argsort()
+    vol_rank = vols.argsort()
+
+    labels = {}
+
+    for r in regime_stats:
+        i = r["regime"]
+
+        if r["mean_return"] > np.percentile(means, 66) and r["volatility"] < np.percentile(vols, 50):
+            label = "Bullish / Growth"
+        elif r["mean_return"] < np.percentile(means, 33) and r["volatility"] > np.percentile(vols, 66):
+            label = "Bearish / Turbulent"
+        elif r["volatility"] > np.percentile(vols, 66):
+            label = "High Volatility / Uncertain"
+        else:
+            label = "Calm / Sideways"
+
+        labels[i] = label
+
+    return labels
+
 if __name__ == "__main__":
     prices = load_price_data("AAPL", "2y")
     returns = compute_log_returns(prices)
