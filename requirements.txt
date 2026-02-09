@@ -2,7 +2,7 @@ numpy
 pandas
 matplotlib
 streamlit==1.32.2
-altair
+altair==4.2.2
 yfinance
 hmmlearn
 scikit-learn
