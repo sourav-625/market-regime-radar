@@ -1,0 +1,10 @@
+numpy
+pandas
+matplotlib
+yfinance
+hmmlearn
+scikit-learn
+fastapi
+uvicorn
+requests
+scipy
